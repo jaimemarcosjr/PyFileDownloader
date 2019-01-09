@@ -130,6 +130,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 <script type="text/javascript">
+  let isDownloading = false;
+
   ws = new WebSocket("ws://localhost:8090/dlprogress");
   ws.onopen = function() {
     ws.send("Hello, world");
@@ -140,9 +142,12 @@
       console.log(res.error);
       return;
     }
-    console.log(res.current_dl);
+    if (parseFloat(res.current_percent) > 0 && 1 > parseFloat(res.current_percent)) {
+      isDownloading = true;
+    }
+    console.log(res.current_percent);
     $("#filename").html(res.file_name);
-    $("#progress > div > span ").html(res.current_percent + "% <br/> (" + res.current_dl + "KB/" + res.total_size + "KB)");
+    $("#progress > div > span ").html(parseFloat(res.current_percent).toFixed(2) + "% <br/> (" + res.current_dl + "KB/" + res.total_size + "KB)");
     $("#progress > div").css("width", res.current_percent + "%");
     if (parseInt(res.current_percent) === 100) {
       alert("Download complete!");
@@ -150,6 +155,7 @@
       $("#progress > div > span ").html("");
       $("#filename").html("");
       $("#url").val("");
+      isDownloading = false;
     }
   };
   ws.onclose = function() {
@@ -160,6 +166,10 @@
     event.preventDefault();
     url = $("#url").val();
     if (url === "") {
+      return;
+    }
+    if (isDownloading) {
+      alert("Downloading!");
       return;
     }
     ws.send(url);

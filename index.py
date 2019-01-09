@@ -162,7 +162,7 @@ def handle_websocket():
                 file_size_dl += len(buffer)
                 f.write(buffer)
                 current_dl = "{0:.2f}".format((file_size_dl / float(1000.00)))
-                current_percent = "{0:.2f}".format(
+                current_percent = "{0:.10f}".format(
                     (file_size_dl * 100. / file_size))
                 status = dumpJSON({'file_name': file_name,
                                    'current_dl': current_dl,
