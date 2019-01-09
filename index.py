@@ -154,7 +154,7 @@ def handle_websocket():
             file_size = int(meta.getheaders("Content-Length")[0])
             total_size = "{0:.2f}".format(file_size / float(1000.00))
             file_size_dl = 0
-            block_sz = 1024000  * 2
+            block_sz = 1024000  * 3
             while True:
                 buffer = u.read(block_sz)
                 if not buffer:
