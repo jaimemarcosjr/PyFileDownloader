@@ -132,7 +132,7 @@
 <script type="text/javascript">
   let isDownloading = false;
 
-  ws = new WebSocket("ws://localhost:8090/dlprogress");
+  ws = new WebSocket("/dlprogress");
   ws.onopen = function() {
     ws.send("Hello, world");
   };
