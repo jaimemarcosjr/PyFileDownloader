@@ -149,7 +149,7 @@ def handle_websocket():
             url = wsock.receive()
             file_name = url.split('/')[-1]
             u = urllib2.urlopen(url)
-            f = open(str(Path('/home/jm')) + "/" + file_name, 'wb')
+            f = open(str(Path(pr.getPath())) + "/" + file_name, 'wb')
             meta = u.info()
             file_size = int(meta.getheaders("Content-Length")[0])
             total_size = "{0:.2f}".format(file_size / float(1000.00))
