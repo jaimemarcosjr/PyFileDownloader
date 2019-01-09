@@ -132,7 +132,7 @@
 <script type="text/javascript">
   let isDownloading = false;
 
-  ws = new WebSocket("/dlprogress");
+  ws = new WebSocket("ws://localhost:8090/dlprogress"); //this must be changed according to the remote server's address
   ws.onopen = function() {
     ws.send("Hello, world");
   };
