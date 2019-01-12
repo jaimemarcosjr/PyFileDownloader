@@ -24,12 +24,6 @@
   <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#changepassmodal">Change Pass</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#changepathmodal">Change Directory</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="/">Download</a>
       </li>
     </ul>
