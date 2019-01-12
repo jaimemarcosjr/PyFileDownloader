@@ -27,7 +27,7 @@
         <div class="card-body bg-light text-dark">
           <form id="formsetup" method="post" action="/setup">
             <div class="form-group">
-              <input type="text" class="form-control" id="path" name="path" placeholder="Path..." required>
+              <input type="text" class="form-control" value="{{path}}" id="path" name="path" placeholder="Path..." required>
             </div>
             <div class="form-group">
               <input type="password" class="form-control" id="pass" name="pass" placeholder="Password..." required>

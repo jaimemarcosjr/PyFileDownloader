@@ -4,15 +4,10 @@ from geventwebsocket import WebSocketError
 from pref import pref
 from pathlib2 import Path
 from bottle import Bottle, run, template, request, abort, redirect, response
-import urllib2
-import httplib
-import json
-import os
-import shutil
+import urllib2, httplib, json, os, shutil
 
 pr = pref()
 app = Bottle()
-
 
 def dumpJSON(data):
     return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
@@ -95,14 +90,14 @@ def do_setup():
     password = request.forms.get('pass').strip()
     cpass = request.forms.get('cpass').strip()
     if path == "" or password == "" or cpass == "":
-        return redirect("/setup/incomplete")
+        return redirect("/setup/incomplete/" + path)
     if cpass != password:
-        return redirect("/setup/notmatch")
+        return redirect("/setup/notmatch/" + path)
     pr.savePath(path)
     pr.savePassword(password)
     redirect("/")
 
-
+@app.route('/setup/<status>/<path>')
 @app.route('/setup/<status>')
 def index(status, path=""):
     """Setup page"""
@@ -120,7 +115,8 @@ def index(status, path=""):
             </div>'''
     info = {'title': 'Setup!',
             'content': 'You will input a password for the web app and path to save the files.',
-            'footer': footer
+            'footer': footer,
+            'path' : path
             }
     return template('setup.tpl', info)
 
