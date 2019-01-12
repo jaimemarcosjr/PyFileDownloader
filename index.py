@@ -7,6 +7,8 @@ from bottle import Bottle, run, template, request, abort, redirect, response
 import urllib2
 import httplib
 import json
+import os
+import shutil
 
 pr = pref()
 app = Bottle()
@@ -102,7 +104,7 @@ def do_setup():
 
 
 @app.route('/setup/<status>')
-def index(status):
+def index(status, path=""):
     """Setup page"""
     footer = ''
     if status == "notmatch":
@@ -121,6 +123,36 @@ def index(status):
             'footer': footer
             }
     return template('setup.tpl', info)
+
+
+@app.route('/remove/<item>')
+def index(item=""):
+    file = str(Path(pr.getPath())) + "/" + item
+    try:
+        os.remove(file)
+        redirect("/list/deleted")
+    except OSError as e:
+        if e.errno == 21:
+            shutil.rmtree(file)
+            redirect("/list/deleted")
+        redirect("/list/notfound")
+
+
+@app.route('/list/<status>')
+@app.route('/list')
+def index(status=""):
+    if(pr.checkPassAndPathExist()):
+        if not request.get_cookie("logged_in"):
+            redirect("/login/1")
+        """Home page"""
+        info = {'title': 'Directory list',
+                'content': 'This is all your item downloaded. You can remove your item here.',
+                'list': os.listdir(str(Path(pr.getPath()))),
+                'res': status
+                }
+        return template('list.tpl', info)
+    else:
+        redirect("/setup/1")
 
 
 @app.route('/')
@@ -154,7 +186,7 @@ def handle_websocket():
             file_size = int(meta.getheaders("Content-Length")[0])
             total_size = "{0:.2f}".format(file_size / float(1000.00))
             file_size_dl = 0
-            block_sz = 1024000  * 3
+            block_sz = 1024000 * 3
             while True:
                 buffer = u.read(block_sz)
                 if not buffer:

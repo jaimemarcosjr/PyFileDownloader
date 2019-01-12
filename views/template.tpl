@@ -29,6 +29,9 @@
       <li class="nav-item">
         <a class="nav-link" href="#" data-toggle="modal" data-target="#changepathmodal">Change Directory</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/list">List Directory</a>
+      </li>
     </ul>
   </nav>
   <div class="container">
