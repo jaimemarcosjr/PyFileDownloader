@@ -149,7 +149,6 @@
       if (parseFloat(res.current_percent) > 0 && 1 > parseFloat(res.current_percent)) {
         isDownloading = true;
       }
-      console.log(res.current_percent);
       $("#filename").html(res.file_name);
       $("#progress > div > span ").html(parseFloat(res.current_percent).toFixed(2) + "% <br/> (" + res.current_dl + "KB/" + res.total_size + "KB)");
       $("#progress > div").css("width", res.current_percent + "%");
