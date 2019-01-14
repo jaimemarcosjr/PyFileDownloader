@@ -9,6 +9,7 @@ import urllib2, httplib, json, os, shutil
 pr = pref()
 app = Bottle()
 
+
 def dumpJSON(data):
     return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
@@ -20,7 +21,11 @@ def index(name):
 
 @app.route('/hi/<name>/<action>/<user>')
 def index(name, action, user):
-    return template('<b>Hi {{name}} {{action}} {{user}}</b>!', name=name, action=action, user=user)
+    return template(
+        '<b>Hi {{name}} {{action}} {{user}}</b>!',
+        name=name,
+        action=action,
+        user=user)
 
 
 @app.route('/changepass', method='POST')
@@ -76,10 +81,11 @@ def index(status):
                 <button type="button" class="close" data-dismiss = "alert" > &times; </button >
                 <strong > Warning!</strong > Fill up all form!
             </div>'''
-    info = {'title': 'Login',
-            'content': 'Please provide your password.',
-            'footer': footer
-            }
+    info = {
+        'title': 'Login',
+        'content': 'Please provide your password.',
+        'footer': footer
+    }
 
     return template('login.tpl', info)
 
@@ -97,6 +103,7 @@ def do_setup():
     pr.savePassword(password)
     redirect("/")
 
+
 @app.route('/setup/<status>/<path>')
 @app.route('/setup/<status>')
 def index(status, path=""):
@@ -113,11 +120,16 @@ def index(status, path=""):
                 <button type="button" class="close" data-dismiss = "alert" > &times; </button >
                 <strong > Warning!</strong > Fill up all form!
             </div>'''
-    info = {'title': 'Setup!',
-            'content': 'You will input a password for the web app and path to save the files.',
-            'footer': footer,
-            'path' : path
-            }
+    info = {
+        'title':
+        'Setup!',
+        'content':
+        'You will input a password for the web app and path to save the files.',
+        'footer':
+        footer,
+        'path':
+        path
+    }
     return template('setup.tpl', info)
 
 
@@ -137,15 +149,20 @@ def index(item=""):
 @app.route('/list/<status>')
 @app.route('/list')
 def index(status=""):
-    if(pr.checkPassAndPathExist()):
+    if (pr.checkPassAndPathExist()):
         if not request.get_cookie("logged_in"):
             redirect("/login/1")
         """Home page"""
-        info = {'title': 'Directory list',
-                'content': 'This is all your item downloaded. You can remove your item here.',
-                'list': os.listdir(str(Path(pr.getPath()))),
-                'res': status
-                }
+        info = {
+            'title':
+            'Directory list',
+            'content':
+            'This is all your item downloaded. You can remove your item here.',
+            'list':
+            os.listdir(str(Path(pr.getPath()))),
+            'res':
+            status
+        }
         return template('list.tpl', info)
     else:
         redirect("/setup/1")
@@ -153,14 +170,15 @@ def index(status=""):
 
 @app.route('/')
 def index():
-    if(pr.checkPassAndPathExist()):
+    if (pr.checkPassAndPathExist()):
         if not request.get_cookie("logged_in"):
             redirect("/login/1")
         """Home page"""
-        info = {'title': 'Welcome Home!',
-                'content': 'Paste your url to download the file to server.',
-                'path': pr.getPath()
-                }
+        info = {
+            'title': 'Welcome Home!',
+            'content': 'Paste your url to download the file to server.',
+            'path': pr.getPath()
+        }
 
         return template('template.tpl', info)
     else:
@@ -192,10 +210,12 @@ def handle_websocket():
                 current_dl = "{0:.2f}".format((file_size_dl / float(1000.00)))
                 current_percent = "{0:.10f}".format(
                     (file_size_dl * 100. / file_size))
-                status = dumpJSON({'file_name': file_name,
-                                   'current_dl': current_dl,
-                                   'current_percent': current_percent,
-                                   'total_size': total_size})
+                status = dumpJSON({
+                    'file_name': file_name,
+                    'current_dl': current_dl,
+                    'current_percent': current_percent,
+                    'total_size': total_size
+                })
                 wsock.send(status)
             f.close()
         except WebSocketError:
@@ -216,6 +236,5 @@ def handle_websocket():
             wsock.send(dumpJSON({"error": "generic"}))
 
 
-server = WSGIServer(("127.0.0.1", 8090), app,
-                    handler_class=WebSocketHandler)
+server = WSGIServer(("127.0.0.1", 8090), app, handler_class=WebSocketHandler)
 server.serve_forever()

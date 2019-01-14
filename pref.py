@@ -12,7 +12,7 @@ class pref:
     def getPath(self):
         t = ("path", )
         selectResult = self.__select(t)
-        if(str(selectResult) == "None"):
+        if (str(selectResult) == "None"):
             print("None")
             return ""
         else:
@@ -27,7 +27,7 @@ class pref:
     def checkPassAndPathExist(self):
         resPath = int(self.__checkNameExists("path"))
         resPass = int(self.__checkNameExists("pass"))
-        if(resPath == 1 and resPass == 1):
+        if (resPath == 1 and resPass == 1):
             return True
         else:
             return False
@@ -35,14 +35,14 @@ class pref:
     def savePassword(self, value):
         res = self.__checkNameExists("pass")
         print(res)
-        if(int(res) == 1):
+        if (int(res) == 1):
             t = (value, "pass")
             self.__update(t)
-        elif(int(res) == 0):
+        elif (int(res) == 0):
             t = ("pass", value)
             self.__insert(t)
-        elif(int(res) > 1):
-            t = ("pass",)
+        elif (int(res) > 1):
+            t = ("pass", )
             self.__delete(t)
             t = ("pass", value)
             self.__insert(t)
@@ -51,14 +51,14 @@ class pref:
     def savePath(self, value):
         res = self.__checkNameExists("path")
         print(res)
-        if(int(res) == 1):
+        if (int(res) == 1):
             t = (value, "path")
             self.__update(t)
-        elif(int(res) == 0):
+        elif (int(res) == 0):
             t = ("path", value)
             self.__insert(t)
-        elif(int(res) > 1):
-            t = ("path",)
+        elif (int(res) > 1):
+            t = ("path", )
             self.__delete(t)
             t = ("path", value)
             self.__insert(t)
@@ -81,7 +81,7 @@ class pref:
         print("insert")
 
     def __checkNameExists(self, name):
-        t = (name,)
+        t = (name, )
         self.c.execute('SELECT COUNT(*) FROM conf WHERE name=?', t)
         r = self.c.fetchone()
         res = str(r[0])
