@@ -4,7 +4,7 @@ from geventwebsocket import WebSocketError
 from pref import pref
 from pathlib2 import Path
 from bottle import Bottle, run, template, request, abort, redirect, response
-import urllib2, httplib, json, os, shutil
+import urllib2, httplib, json, os, shutil, binascii
 
 pr = pref()
 app = Bottle()
@@ -95,10 +95,11 @@ def do_setup():
     path = request.forms.get('path').strip()
     password = request.forms.get('pass').strip()
     cpass = request.forms.get('cpass').strip()
+    p = bin(int(binascii.hexlify(path), 16)) 
     if path == "" or password == "" or cpass == "":
-        return redirect("/setup/incomplete/" + path)
+        return redirect("/setup/incomplete/" + p)
     if cpass != password:
-        return redirect("/setup/notmatch/" + path)
+        return redirect("/setup/notmatch/" + p )
     pr.savePath(path)
     pr.savePassword(password)
     redirect("/")
@@ -108,6 +109,8 @@ def do_setup():
 @app.route('/setup/<status>')
 def index(status, path=""):
     """Setup page"""
+    n = int(path, 2)
+    path = binascii.unhexlify('%x' % n)
     footer = ''
     if status == "notmatch":
         print(status)
