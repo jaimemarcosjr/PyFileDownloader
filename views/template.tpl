@@ -123,107 +123,111 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   <script type="text/javascript">
   $(document).ready(function() {
-  let isDownloading = false;
-  url = "ws://" + window.location.host + "/dlprogress"
-  ws = new WebSocket(url); //this must be changed according to the remote server's address
-  ws.onopen = function() {
-  ws.send("Hello, world");
-  };
-  ws.onmessage = function(evt) {
-  res = JSON.parse(evt.data);
-  if (res.error !== undefined && res.error !== null) {
-  console.log(res.error);
-  return;
-  }
-  if (parseFloat(res.current_percent) > 0 && 1 > parseFloat(res.current_percent)) {
-  isDownloading = true;
-  }
-  $("#filename").html(res.file_name);
-  $("#progress > div > span ").html(parseFloat(res.current_percent).toFixed(2) + "% <br/> (" + res.current_dl + "KB/" + res.total_size + "KB)");
-  $("#progress > div").css("width", res.current_percent + "%");
-  if (parseInt(res.current_percent) === 100) {
-  alert("Download complete!");
-  $("#progress > div").css("width", "0");
-  $("#progress > div > span ").html("");
-  $("#filename").html("");
-  $("#url").val("");
-  isDownloading = false;
-  }
-  };
-  ws.onclose = function() {
-  console.log("close");
-  };
-  $("#formurl").submit(function(event) {
-  event.preventDefault();
-  url = $("#url").val();
-  if (url === "") {
-  return;
-  }
-  if (isDownloading) {
-  alert("Downloading!");
-  return;
-  }
-  ws.send(url);
-  });
-  $("#formcpass").submit(function(event) {
-  event.preventDefault();
-  var $form = $(this),
-  cpass = $form.find("input[name='cpass']").val(),
-  curpass = $form.find("input[name='curpass']").val(),
-  chpass = $form.find("input[name='chpass']").val(),
-  url = $form.attr("action");
-  var posting = $.post(url, {
-  cpass: cpass,
-  curpass: curpass,
-  chpass: chpass
-  });
-  posting.done(function(data) {
-  res = JSON.parse(data);
-  if (res.result === 'error') {
-  if (res.message === "wrong_pass") {
-  alert("Wrong current password.");
-  } else if (res.message === "not_match") {
-  alert("Password don't match.");
-  }
-  } else if (res.result === 'success') {
-  console.log(res.message);
-  alert("Password changed.");
-  $("#changepassmodal").modal("hide");
-  $form.find("input[name='cpass']").val("")
-  $form.find("input[name='curpass']").val("")
-  $form.find("input[name='chpass']").val("")
-  }
-  });
-  posting.fail(function() {
-  alert("error. Somethong went wrong.");
-  })
-  });
-  $("#formcpath").submit(function(event) {
-  event.preventDefault();
-  var $form = $(this),
-  path = $form.find("input[name='path']").val(),
-  pass = $form.find("input[name='pass']").val(),
-  url = $form.attr("action");
-  var posting = $.post(url, {
-  path: path,
-  pass: pass
-  });
-  posting.done(function(data) {
-  res = JSON.parse(data);
-  if (res.result === 'error') {
-  alert("Wrong current password.");
-  } else if (res.result === 'success') {
-  console.log(res.message);
-  alert("Path changed.");
-  $("#changepathmodal").modal("hide");
-  $form.find("input[name='path']").val("")
-  $form.find("input[name='pass']").val("")
-  }
-  });
-  posting.fail(function() {
-  alert("error. Somethong went wrong.");
-  })
-  });
+      let isDownloading = false;
+      url = "ws://" + window.location.host + "/dlprogress";
+      console.log(url);
+      ws = new WebSocket(url); //this must be changed according to the remote server's address
+      ws.onopen = function() {
+          ws.send("Hello, world");
+      };
+      ws.onmessage = function(evt) {
+          res = JSON.parse(evt.data);
+          if (res.error !== undefined && res.error !== null) {
+              console.log(res.error);
+              if (res.code !== undefined && res.code !== null) {
+                  console.log(res.code);
+              }
+              return;
+          }
+          if (parseFloat(res.current_percent) > 0 && 1 > parseFloat(res.current_percent)) {
+              isDownloading = true;
+          }
+          $("#filename").html(res.file_name);
+          $("#progress > div > span ").html(parseFloat(res.current_percent).toFixed(2) + "% <br/> (" + res.current_dl + "KB/" + res.total_size + "KB)");
+          $("#progress > div").css("width", res.current_percent + "%");
+          if (parseInt(res.current_percent) === 100) {
+              alert("Download complete!");
+              $("#progress > div").css("width", "0");
+              $("#progress > div > span ").html("");
+              $("#filename").html("");
+              $("#url").val("");
+              isDownloading = false;
+          }
+      };
+      ws.onclose = function() {
+          console.log("close");
+      };
+      $("#formurl").submit(function(event) {
+          event.preventDefault();
+          url = $("#url").val();
+          if (url === "") {
+              return;
+          }
+          if (isDownloading) {
+              alert("Downloading!");
+              return;
+          }
+          ws.send(url);
+      });
+      $("#formcpass").submit(function(event) {
+          event.preventDefault();
+          var $form = $(this),
+              cpass = $form.find("input[name='cpass']").val(),
+              curpass = $form.find("input[name='curpass']").val(),
+              chpass = $form.find("input[name='chpass']").val(),
+              url = $form.attr("action");
+          var posting = $.post(url, {
+              cpass: cpass,
+              curpass: curpass,
+              chpass: chpass
+          });
+          posting.done(function(data) {
+              res = JSON.parse(data);
+              if (res.result === 'error') {
+                  if (res.message === "wrong_pass") {
+                      alert("Wrong current password.");
+                  } else if (res.message === "not_match") {
+                      alert("Password don't match.");
+                  }
+              } else if (res.result === 'success') {
+                  console.log(res.message);
+                  alert("Password changed.");
+                  $("#changepassmodal").modal("hide");
+                  $form.find("input[name='cpass']").val("")
+                  $form.find("input[name='curpass']").val("")
+                  $form.find("input[name='chpass']").val("")
+              }
+          });
+          posting.fail(function() {
+              alert("error. Somethong went wrong.");
+          })
+      });
+      $("#formcpath").submit(function(event) {
+          event.preventDefault();
+          var $form = $(this),
+              path = $form.find("input[name='path']").val(),
+              pass = $form.find("input[name='pass']").val(),
+              url = $form.attr("action");
+          var posting = $.post(url, {
+              path: path,
+              pass: pass
+          });
+          posting.done(function(data) {
+              res = JSON.parse(data);
+              if (res.result === 'error') {
+                  alert("Wrong current password.");
+              } else if (res.result === 'success') {
+                  console.log(res.message);
+                  alert("Path changed.");
+                  $("#changepathmodal").modal("hide");
+                  $form.find("input[name='path']").val("")
+                  $form.find("input[name='pass']").val("")
+              }
+          });
+          posting.fail(function() {
+              alert("error. Somethong went wrong.");
+          })
+      });
   });
   </script>
 </html>

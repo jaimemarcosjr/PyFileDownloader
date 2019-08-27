@@ -225,6 +225,7 @@ def handle_websocket():
             break
         except urllib2.HTTPError as e:
             wsock.send(dumpJSON({"error": "HTTPError", "code": str(e.code)}))
+            print str(e.code)
         except urllib2.URLError as e:
             wsock.send(dumpJSON({"error": "URLError"}))
         except httplib.HTTPException as e:
